@@ -2,6 +2,8 @@ cqueue
 ======
 > circular buffer implementation in golang using linked-list
 
+[![GoDoc](https://godoc.org/github.com/pravj/cqueue?status.svg)](http://godoc.org/github.com/pravj/cqueue)
+
 #####Installation
 ```
 go get github.com/pravj/cqueue
