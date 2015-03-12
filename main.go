@@ -3,7 +3,7 @@ package cqueue
 
 import (
   "container/list"
-  "fmt"
+  "errors"
 )
 
 // CQueue represents a circular buffer data structure
@@ -28,7 +28,7 @@ func New(size int) *CQueue {
 }
 
 // Push adds an element to the circular buffer
-func (cq *CQueue) Push(element interface{}) {
+func (cq *CQueue) Push(element interface{}) (el *list.Element, err error) {
   if (cq.Length < cq.size) {
     cq.Tail = cq.Queue.PushBack(element)
     if (cq.Length == 0) {
@@ -37,23 +37,40 @@ func (cq *CQueue) Push(element interface{}) {
 
     cq.updateLength(1)
   } else {
-    fmt.Println("full buffer")
     cq.Pop()
     cq.Push(element)
   }
+
+  return cq.Tail, nil
 }
 
 // Pop removes the element at the front in circular buffer
-func (cq *CQueue) Pop() {
+// It returns the popped element and error, if any.
+func (cq *CQueue) Pop() (el *list.Element, err error) {
   if (cq.Length > 0) {
-    head := cq.Head.Next()
+    el, err = cq.Head, nil
+    newHead := cq.Head.Next()
+
     cq.Queue.Remove(cq.Head)
-    cq.Head = head
+    cq.Head = newHead
+    if (cq.Length == 1) {
+      cq.Tail = nil
+    }
 
     cq.updateLength(-1)
   } else {
-    fmt.Println("empty buffer")
+    el, err = nil, errors.New("cqueue: buffer is empty")
   }
+
+  return el, err
+}
+
+// Value returns the value of a list element
+func (cq *CQueue) Value(element *list.Element) interface{} {
+  if (element == nil) {
+    return nil
+  }
+  return element.Value
 }
 
 // Whether the circular buffer is full or not
