@@ -20,11 +20,17 @@ type CQueue struct {
   Head *list.Element
   // element at the back-side of the buffer
   Tail *list.Element
+
+  // middleware function to call when buffer overflows
+  overflow func()
 }
 
 // New function returns a CQueue instance of custom size
-func New(size int) *CQueue {
-  return &CQueue{size: size, Queue: list.New()}
+func New(args map[string]interface{}) *CQueue {
+  size := args["size"].(int)
+  middleware := args["middleware"].(func())
+
+  return &CQueue{size: size, Queue: list.New(), overflow: middleware}
 }
 
 // Push adds an element to the circular buffer
@@ -37,6 +43,9 @@ func (cq *CQueue) Push(element interface{}) (el *list.Element, err error) {
 
     cq.updateLength(1)
   } else {
+    // call the middleware function
+    cq.overflow()
+
     cq.Pop()
     cq.Push(element)
   }
