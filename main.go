@@ -7,7 +7,6 @@ import (
 )
 
 // CQueue represents a circular buffer data structure
-// TODO: overflow middleware function also
 type CQueue struct {
   // size limit of the buffer
   size int
@@ -82,13 +81,13 @@ func (cq *CQueue) Value(element *list.Element) interface{} {
   return element.Value
 }
 
-// Whether the circular buffer is full or not
-func (cq *CQueue) isFull() bool {
+// IsFull checks whether the circular buffer is full or not
+func (cq *CQueue) IsFull() bool {
   return (cq.Length == cq.size)
 }
 
-// Whether the circular buffer is empty or not
-func (cq *CQueue) isEmpty() bool {
+// IsEmpty checks whether the circular buffer is empty or not
+func (cq *CQueue) IsEmpty() bool {
   return (cq.Length == 0)
 }
 
